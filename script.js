@@ -15,7 +15,6 @@ const products = [
         id: 2,
         name: 'куртка большая',
         img: './images_jackets/green_jacket_big.jpg',
-        //img: 'https://media.istockphoto.com/photos/red-womans-sports-jacket-picture-id520887025',
         category: 'куртки',
         oldPrice: 5900,
         price: 3790,
@@ -27,7 +26,6 @@ const products = [
         id: 3,
         name: 'куртка модная',
         img: './images_jackets/red_jacket_fashionable.jpg',
-        //img: 'https://media.istockphoto.com/photos/male-coat-isolated-on-the-white-picture-id163208487',
         category: 'куртки',
         price: 5550,
         brand: 'puper',
@@ -36,7 +34,6 @@ const products = [
       },
       {
         img: './images_jackets/green_jacket_profitable.jpg',
-        //img: 'https://media.istockphoto.com/photos/red-womans-sports-jacket-picture-id520887025',
         category: 'куртки',
         oldPrice: 7900,
         price: 1990,
@@ -125,6 +122,10 @@ var selectBrand = document.querySelector("form .form-group:first-child .form-con
 var selectSize = document.querySelector("form .form-group:nth-child(2) .form-control");
 var selectColor = document.querySelector("form .form-group:nth-child(3) .form-control");
 
+/*var defaultValBrand = selectBrand.value;
+var defaultValSize = selectSize.value;
+var defaultValColor = selectColor.value;*/
+
 var reset = document.querySelector(".btn-secondary");
 reset.style.pointerEvents = "none";
 reset.style.cursor = "default";
@@ -133,32 +134,28 @@ selectBrand.addEventListener( "change", function() {
 
   if (selectBrand.classList.contains('chosenEarlier')) {
     let indexLastVal = arrFilters.indexOf(lastValBrand);
-    console.log(lastValBrand);
-    console.log(indexLastVal);
     let result = "Бренд " + selectBrand.value;
-    console.log(result.toLowerCase());
     arrFilters[indexLastVal] = result.toLowerCase();
     lastValBrand = result.toLowerCase();
   } else {
     let result = "Бренд " + selectBrand.value;
     lastValBrand = result.toLowerCase();
-    console.log(lastValBrand);
     selectBrand.classList.add('chosenEarlier');
     let newArrLength = arrFilters.push(lastValBrand);
   }
   compareChoiceWithProducts(arrFilters);
   reset.style.pointerEvents = "auto";
   reset.style.cursor = "pointer";
+  reset.addEventListener("click", function() {
+    resetFilters(arrFilters);
+  });
 });
 
 selectSize.addEventListener( "change", function() {
   if (selectSize.classList.contains('chosenEarlier')) {
     let indexLastVal = arrFilters.indexOf(lastValSize);
-    //console.log(lastFilterVal);
-    //console.log(indexLastVal);
     let result = "Размер " + selectSize.value;
     lastValSize = result.toLowerCase();
-    //console.log(result.toLowerCase());
     arrFilters[indexLastVal] = result.toLowerCase();
   } else {
     let result = "Размер " + selectSize.value;
@@ -169,16 +166,16 @@ selectSize.addEventListener( "change", function() {
   compareChoiceWithProducts(arrFilters);
   reset.style.pointerEvents = "auto";
   reset.style.cursor = "pointer";
+  reset.addEventListener("click", function() {
+    resetFilters(arrFilters);
+  });
 });
 
 selectColor.addEventListener( "change", function() {
   if (selectColor.classList.contains('chosenEarlier')) {
     let indexLastVal = arrFilters.indexOf(lastValColor);
-    //console.log(lastFilterVal);
-    console.log(indexLastVal);
     let result = "Цвет " + selectColor.value;
     lastValColor = result.toLowerCase();
-    //console.log(result.toLowerCase());
     arrFilters[indexLastVal] = result.toLowerCase();
   } else {
     let result = "Цвет " + selectColor.value;
@@ -189,22 +186,21 @@ selectColor.addEventListener( "change", function() {
   compareChoiceWithProducts(arrFilters);
   reset.style.pointerEvents = "auto";
   reset.style.cursor = "pointer";
+  reset.addEventListener("click", function() {
+    resetFilters(arrFilters);
+  });
 });
 
 function compareChoiceWithProducts (arrChoices) {
 
   var count = 0;
   var count1 = 0;
-
-  //var arrayLength = arrChoices.length - 1;
-
   var objects = document.querySelectorAll(".col-6");
 
   for (object of objects) {
     count = 0;
     let characteristics = object.querySelectorAll(".alert-dark div small");
     for (choice of arrChoices) {
-      console.log(choice);
       for (characteristic of characteristics) {
         if (characteristic.textContent.toLowerCase() === choice) {
           count++;
@@ -218,35 +214,31 @@ function compareChoiceWithProducts (arrChoices) {
       object.style.display = "none";
     }
   }
-  /*for (arrFilter of arrFilters) {
-    for (object of objects) {
-      count = 0;
-      let characteristics = object.querySelectorAll(".alert-dark div small");
+  numberProducts(count1);
+}
 
-  for (arrFilter of arrFilters) {
-    for (object of objects) {
-      count = 0;
-      let characteristics = object.querySelectorAll(".alert-dark div small");
-      for (characteristic of characteristics) {
-        if (characteristic.textContent.toLowerCase() === arrFilter) {
-          count++;
-        }
-      }
-    }
-  }*/
-      /*for (characteristic of characteristics) {
-        if (characteristic.textContent.toLowerCase() === arrFilter) {
-          count++;
-        }
-      }
-      if (count === 0) {
-        object.style.display = "none";
-      } else {
-        count1++;
-        object.removeAttribute('style');
-      }*/
+function resetFilters (arrFilters) {
+
+  let i = 0;
+
+  arrFilters.splice(0, arrFilters.length);
+  console.log(arrFilters.length);
+  let elemChosenEarlier = document.querySelectorAll(".chosenEarlier");
+  for (elem of elemChosenEarlier) {
+    elem.classList.remove("chosenEarlier");
+    elem.selectedIndex = 0;
+  }
+  let hiddenProducts = document.querySelectorAll(".col-6");
+  for (product of hiddenProducts) {
+    product.removeAttribute('style');
+    i++;
+  }
+  numberProducts(i);
+}
+
+function numberProducts (number) {
   let foundProduct = document.querySelector(".alert-light");
-  foundProduct.textContent = "Найден " + count1 + " товар";
+  foundProduct.textContent = "Найден " + number + " товар";
 }
 
 var optionsBrand = document.querySelectorAll("form .form-group:first-child .form-control option");
