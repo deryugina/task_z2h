@@ -116,7 +116,11 @@ for(item of items) {
 var beforeFiltersWork = document.querySelector(".alert-light");
 beforeFiltersWork.textContent = "Найден " + i + " товар";
 
+var arrFilters = [];
+var lastValBrand, lastValSize, lastValColor;
+
 //PART_2: WORKING WITH DROPPING BUTTON
+//PART_2: REALIZATION OF FILTERS
 var selectBrand = document.querySelector("form .form-group:first-child .form-control");
 var selectSize = document.querySelector("form .form-group:nth-child(2) .form-control");
 var selectColor = document.querySelector("form .form-group:nth-child(3) .form-control");
@@ -126,73 +130,121 @@ reset.style.pointerEvents = "none";
 reset.style.cursor = "default";
 
 selectBrand.addEventListener( "change", function() {
+
   if (selectBrand.classList.contains('chosenEarlier')) {
-    let hiddenProducts = document.querySelectorAll('div.col-6[style]');
-    for (hiddenProduct of hiddenProducts) {
-      hiddenProduct.removeAttribute('style');
-    }
+    let indexLastVal = arrFilters.indexOf(lastValBrand);
+    console.log(lastValBrand);
+    console.log(indexLastVal);
+    let result = "Бренд " + selectBrand.value;
+    console.log(result.toLowerCase());
+    arrFilters[indexLastVal] = result.toLowerCase();
+    lastValBrand = result.toLowerCase();
   } else {
+    let result = "Бренд " + selectBrand.value;
+    lastValBrand = result.toLowerCase();
+    console.log(lastValBrand);
     selectBrand.classList.add('chosenEarlier');
+    let newArrLength = arrFilters.push(lastValBrand);
   }
-  let brandText = "Бренд " + this.value;
-  compareChoiceWithProducts(brandText);
+  compareChoiceWithProducts(arrFilters);
   reset.style.pointerEvents = "auto";
   reset.style.cursor = "pointer";
 });
 
 selectSize.addEventListener( "change", function() {
   if (selectSize.classList.contains('chosenEarlier')) {
-    let hiddenProducts = document.querySelectorAll('div.col-6[style]');
-    for (hiddenProduct of hiddenProducts) {
-      hiddenProduct.removeAttribute('style');
-    }
+    let indexLastVal = arrFilters.indexOf(lastValSize);
+    //console.log(lastFilterVal);
+    //console.log(indexLastVal);
+    let result = "Размер " + selectSize.value;
+    lastValSize = result.toLowerCase();
+    //console.log(result.toLowerCase());
+    arrFilters[indexLastVal] = result.toLowerCase();
   } else {
+    let result = "Размер " + selectSize.value;
+    lastValSize = result.toLowerCase();
     selectSize.classList.add('chosenEarlier');
+    let newArrLength = arrFilters.push(lastValSize);
   }
-  let sizeText = "Размер " + this.value;
-  compareChoiceWithProducts(sizeText);
+  compareChoiceWithProducts(arrFilters);
   reset.style.pointerEvents = "auto";
   reset.style.cursor = "pointer";
 });
 
 selectColor.addEventListener( "change", function() {
   if (selectColor.classList.contains('chosenEarlier')) {
-    let hiddenProducts = document.querySelectorAll('div.col-6[style]');
-    for (hiddenProduct of hiddenProducts) {
-      hiddenProduct.removeAttribute('style');
-    }
+    let indexLastVal = arrFilters.indexOf(lastValColor);
+    //console.log(lastFilterVal);
+    console.log(indexLastVal);
+    let result = "Цвет " + selectColor.value;
+    lastValColor = result.toLowerCase();
+    //console.log(result.toLowerCase());
+    arrFilters[indexLastVal] = result.toLowerCase();
   } else {
+    let result = "Цвет " + selectColor.value;
+    lastValColor = result.toLowerCase();
     selectColor.classList.add('chosenEarlier');
+    let newArrLength = arrFilters.push(lastValColor);
   }
-  let colorText = "Цвет " + this.value;
-  compareChoiceWithProducts(colorText);
+  compareChoiceWithProducts(arrFilters);
   reset.style.pointerEvents = "auto";
   reset.style.cursor = "pointer";
 });
 
-//PART_3: REALIZATION OF FILTERS
-function compareChoiceWithProducts (variable) {
+function compareChoiceWithProducts (arrChoices) {
 
   var count = 0;
   var count1 = 0;
+
+  //var arrayLength = arrChoices.length - 1;
 
   var objects = document.querySelectorAll(".col-6");
 
   for (object of objects) {
     count = 0;
     let characteristics = object.querySelectorAll(".alert-dark div small");
-    for (characteristic of characteristics) {
-      if (characteristic.textContent.toLowerCase() === variable.toLowerCase()) {
-        count++;
+    for (choice of arrChoices) {
+      console.log(choice);
+      for (characteristic of characteristics) {
+        if (characteristic.textContent.toLowerCase() === choice) {
+          count++;
+        }
       }
     }
-    if (count === 0) {
-      object.style.display = "none";
-    } else {
+    if (arrChoices.length === count) {
+      object.removeAttribute('style');
       count1++;
+    } else {
+      object.style.display = "none";
     }
   }
-  //console.log(count1);
+  /*for (arrFilter of arrFilters) {
+    for (object of objects) {
+      count = 0;
+      let characteristics = object.querySelectorAll(".alert-dark div small");
+
+  for (arrFilter of arrFilters) {
+    for (object of objects) {
+      count = 0;
+      let characteristics = object.querySelectorAll(".alert-dark div small");
+      for (characteristic of characteristics) {
+        if (characteristic.textContent.toLowerCase() === arrFilter) {
+          count++;
+        }
+      }
+    }
+  }*/
+      /*for (characteristic of characteristics) {
+        if (characteristic.textContent.toLowerCase() === arrFilter) {
+          count++;
+        }
+      }
+      if (count === 0) {
+        object.style.display = "none";
+      } else {
+        count1++;
+        object.removeAttribute('style');
+      }*/
   let foundProduct = document.querySelector(".alert-light");
   foundProduct.textContent = "Найден " + count1 + " товар";
 }
