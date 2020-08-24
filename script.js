@@ -33,6 +33,8 @@ const products = [
         color: 'красный'
       },
       {
+        id: 4,
+        name: 'куртка выгодная',
         img: './images_jackets/green_jacket_profitable.jpg',
         category: 'куртки',
         oldPrice: 7900,
@@ -60,9 +62,6 @@ for(item of items) {
   let Img = item.querySelector(".card-img-top");
   Img.src = products[i].img;
 
-  //Img.style.height = "232px";
-  //Img.style.width = "351px";
-
   let cardTitle = item.querySelector(".mb-0");
   cardTitle.innerText = products[i].name;
 
@@ -89,25 +88,32 @@ for(item of items) {
     cardText.appendChild(alertClone);
   }
 
+  function displayNamesOfDetails (detail, detailTitle, constantFieldVal) {
+
+    detail.innerText = constantFieldVal;
+    let createStrong = document.createElement('strong');
+    createStrong.textContent = detailTitle;
+    detail.prepend(createStrong);
+  }
+
   let Brand = item.querySelector(".alert-dark div:first-child small");
-  Brand.innerText = products[i].brand;
-  let brandText = document.createElement('strong');
-  brandText.textContent = "Бренд ";
-  Brand.prepend(brandText);
+  displayNamesOfDetails (Brand, "Бренд ", products[i].brand);
 
   let Size = item.querySelector(".alert-dark div:nth-child(2) small");
-  Size.innerText = products[i].size;
-  let sizeText = document.createElement('strong');
-  sizeText.textContent = "Размер ";
-  Size.prepend(sizeText);
+  displayNamesOfDetails (Size, "Размер ", products[i].size);
 
   let Color = item.querySelector(".alert-dark div:last-child small");
-  Color.innerText = products[i].color;
-  let colorText = document.createElement('strong');
-  colorText.textContent = "Цвет ";
-  Color.prepend(colorText);
+  displayNamesOfDetails (Color, "Цвет ", products[i].color);
 
   i++;
+}
+
+var fullForms = document.querySelectorAll(".col-6");
+for (form of fullForms) {
+  let addInfo = form.querySelector(".alert-dark");
+  addInfo.classList.add('short-view');
+  addInfo.style.visibility = "hidden";
+  addInfo.style.position = "absolute";
 }
 
 var beforeFiltersWork = document.querySelector(".alert-light");
@@ -116,80 +122,45 @@ beforeFiltersWork.textContent = "Найден " + i + " товар";
 var arrFilters = [];
 var lastValBrand, lastValSize, lastValColor;
 
-//PART_2: WORKING WITH DROPPING BUTTON
 //PART_2: REALIZATION OF FILTERS
 var selectBrand = document.querySelector("form .form-group:first-child .form-control");
 var selectSize = document.querySelector("form .form-group:nth-child(2) .form-control");
 var selectColor = document.querySelector("form .form-group:nth-child(3) .form-control");
 
-/*var defaultValBrand = selectBrand.value;
-var defaultValSize = selectSize.value;
-var defaultValColor = selectColor.value;*/
-
 var reset = document.querySelector(".btn-secondary");
 reset.style.pointerEvents = "none";
 reset.style.cursor = "default";
 
-selectBrand.addEventListener( "change", function() {
-
-  if (selectBrand.classList.contains('chosenEarlier')) {
-    let indexLastVal = arrFilters.indexOf(lastValBrand);
-    let result = "Бренд " + selectBrand.value;
-    arrFilters[indexLastVal] = result.toLowerCase();
-    lastValBrand = result.toLowerCase();
-  } else {
-    let result = "Бренд " + selectBrand.value;
-    lastValBrand = result.toLowerCase();
-    selectBrand.classList.add('chosenEarlier');
-    let newArrLength = arrFilters.push(lastValBrand);
-  }
-  compareChoiceWithProducts(arrFilters);
+function activationResetButton (reset) {
   reset.style.pointerEvents = "auto";
   reset.style.cursor = "pointer";
   reset.addEventListener("click", function() {
     resetFilters(arrFilters);
   });
-});
+}
 
-selectSize.addEventListener( "change", function() {
-  if (selectSize.classList.contains('chosenEarlier')) {
-    let indexLastVal = arrFilters.indexOf(lastValSize);
-    let result = "Размер " + selectSize.value;
-    lastValSize = result.toLowerCase();
-    arrFilters[indexLastVal] = result.toLowerCase();
-  } else {
-    let result = "Размер " + selectSize.value;
-    lastValSize = result.toLowerCase();
-    selectSize.classList.add('chosenEarlier');
-    let newArrLength = arrFilters.push(lastValSize);
-  }
-  compareChoiceWithProducts(arrFilters);
-  reset.style.pointerEvents = "auto";
-  reset.style.cursor = "pointer";
-  reset.addEventListener("click", function() {
-    resetFilters(arrFilters);
-  });
-});
+addEventToElement(selectBrand, lastValBrand, "Бренд ");
+addEventToElement(selectSize, lastValSize, "Размер ");
+addEventToElement(selectColor, lastValColor, "Цвет ");
 
-selectColor.addEventListener( "change", function() {
-  if (selectColor.classList.contains('chosenEarlier')) {
-    let indexLastVal = arrFilters.indexOf(lastValColor);
-    let result = "Цвет " + selectColor.value;
-    lastValColor = result.toLowerCase();
-    arrFilters[indexLastVal] = result.toLowerCase();
-  } else {
-    let result = "Цвет " + selectColor.value;
-    lastValColor = result.toLowerCase();
-    selectColor.classList.add('chosenEarlier');
-    let newArrLength = arrFilters.push(lastValColor);
-  }
-  compareChoiceWithProducts(arrFilters);
-  reset.style.pointerEvents = "auto";
-  reset.style.cursor = "pointer";
-  reset.addEventListener("click", function() {
-    resetFilters(arrFilters);
+function addEventToElement (selectOption, lastValOption, characteristicTitle) {
+
+  selectOption.addEventListener( "change", function() {
+    if (selectOption.classList.contains('chosenEarlier')) {
+      let indexLastVal = arrFilters.indexOf(lastValOption);
+      let result = characteristicTitle + selectOption.value;
+      arrFilters[indexLastVal] = result.toLowerCase();
+      lastValOption = result.toLowerCase();
+    } else {
+      let result = characteristicTitle + selectOption.value;
+      lastValOption = result.toLowerCase();
+      selectOption.classList.add('chosenEarlier');
+      let newArrLength = arrFilters.push(lastValOption);
+    }
+    compareChoiceWithProducts(arrFilters);
+    activationResetButton(reset);
   });
-});
+}
 
 function compareChoiceWithProducts (arrChoices) {
 
@@ -266,19 +237,18 @@ var cardProducts = document.querySelectorAll(".col-6");
 for (cardProduct of cardProducts) {
 
   cardProduct.addEventListener("click", function() {
-    this.classList.toggle("full-view");
-    if (this.classList.contains('full-view') === true) {
-      let addition = this.querySelector('.alert-dark');
-      addition.style.visibility = "hidden";
-      addition.style.position = "absolute";
+    this.classList.toggle("short-view");
+    if (this.classList.contains("short-view") === true) {
+      let additionVisible = this.querySelector('.alert-dark');
+      additionVisible.style.visibility = "visible";
+      additionVisible.style.position = "relative";
     } else {
-      let addition1 = this.querySelector('.alert-dark');
-      addition1.style.visibility = "visible";
-      addition1.style.position = "relative";
+      let additionHidden = this.querySelector('.alert-dark');
+      additionHidden.style.visibility = "hidden";
+      additionHidden.style.position = "absolute";
     }
   });
 }
-//}
 
 var byuButtons = document.querySelectorAll(".btn-primary");
 for (byuButton of byuButtons) {
