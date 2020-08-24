@@ -232,13 +232,45 @@ for (optionColor of optionsColor) {
 
 
 //PART_4: TOGGLE
+function clickByuButton (byuButton) {
+  byuButton.classList.remove('stretched-link');
+  let parentBut = byuButton.parentNode;
+  let titleProduct = parentBut.querySelector(".mb-0");
+  byuButton.addEventListener("click", function() {
+    let text = "куплен товар " + titleProduct.textContent;
+    alert(text);
+  });
+}
+/*function clickByuButton () {
+  var byuButtons = document.querySelectorAll(".btn-primary");
+  for (byuButton of byuButtons) {
+    byuButton.classList.remove('stretched-link');
+    let parentBut = byuButton.parentNode;
+    let titleProduct = parentBut.querySelector(".mb-0");
+    byuButton.addEventListener("click", function() {
+      let text = "куплен товар " + titleProduct.textContent;
+      alert(text);
+    });
+  }
+}*/
+
+var byuButtons = document.querySelectorAll(".btn-primary");
+for (byuButton of byuButtons) {
+  clickByuButton(byuButton);
+}
+
 var cardProducts = document.querySelectorAll(".col-6");
 
 for (cardProduct of cardProducts) {
 
   cardProduct.addEventListener("click", function() {
     this.classList.toggle("short-view");
-    if (this.classList.contains("short-view") === true) {
+    let byuButton = this.querySelector(".btn-primary");
+    let clickTarget = event.target;
+    if (clickTarget === byuButton) {
+      clickByuButton(byuButton);
+    }
+    else if (this.classList.contains("short-view") === true) {
       let additionVisible = this.querySelector('.alert-dark');
       additionVisible.style.visibility = "visible";
       additionVisible.style.position = "relative";
@@ -247,16 +279,5 @@ for (cardProduct of cardProducts) {
       additionHidden.style.visibility = "hidden";
       additionHidden.style.position = "absolute";
     }
-  });
-}
-
-var byuButtons = document.querySelectorAll(".btn-primary");
-for (byuButton of byuButtons) {
-  byuButton.classList.remove('stretched-link');
-  let parentBut = byuButton.parentNode;
-  let titleProduct = parentBut.querySelector(".mb-0");
-  byuButton.addEventListener("click", function() {
-    let text = "куплен товар " + titleProduct.textContent;
-    alert(text);
   });
 }
